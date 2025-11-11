@@ -21,3 +21,15 @@ Access granted at <timestamp>
 ```
 
 where `<timestamp>` is the value stored in `req.timestamp`.
+
+---
+
+##  Example
+
+### Request:
+GET http://localhost:3000/protected
+
+
+**Successful Response (Date and time will vary):**
+
+Access granted at Tue Nov 11 2025 10:45:23 GMT+0530 (India Standard Time)
