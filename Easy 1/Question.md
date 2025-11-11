@@ -1,9 +1,9 @@
-# 📝 Problem Statement
+# Problem Statement
 
 Your task is to complete the `writeDataFile()` function, which is inside the **`./index.js`** file.
 
 
-## 🧩 Requirements
+##  Requirements
 
 The function should perform the following:
 
@@ -17,7 +17,7 @@ The function should perform the following:
 
 ---
 
-## ✅ Example
+##  Example
 
 After calling:
 
