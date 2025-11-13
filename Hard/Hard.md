@@ -139,7 +139,7 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 
 ### ***Get N-Level Connections***
 
-## Endpoint
+***Endpoint***
 `GET /users/:id/connections/:level`
 
 **Example Request:**
