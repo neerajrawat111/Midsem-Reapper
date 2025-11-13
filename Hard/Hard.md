@@ -137,7 +137,7 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 
 ---
 
-# Get N-Level Connections — Detailed Explanation
+### ***Get N-Level Connections***
 
 ## Endpoint
 `GET /users/:id/connections/:level`
@@ -149,7 +149,7 @@ GET /users/b1a4d9a3-52b4-4eaa-9cc3-8a9c87d22e6f/connections/2
 
 ---
 
-## Concept: N-Level Connections
+### ***Concept: N-Level Connections***
 
 Every **user** is a **node**, and every **connection** is an **edge** between users — similar to a social graph.
 
@@ -161,7 +161,7 @@ Every **user** is a **node**, and every **connection** is an **edge** between us
 
 ---
 
-## Example Data
+***Example Data***
 
 | ID | Name | Connections |
 |----|------|-------------|
@@ -172,7 +172,7 @@ Every **user** is a **node**, and every **connection** is an **edge** between us
 | U5 | David | U3 |
 | U6 | Emma | U4 |
 
-### Graph Visualization
+***Graph Visualization***
 
 ```
         U5(David)
@@ -188,7 +188,7 @@ U1(Suraj) - U3(Bob)
 
 ---
 
-## 🔍 Example Query
+***Example Query***
 
 **Request:**
 ```
@@ -209,7 +209,7 @@ Final connections up to level 2 → [U2, U3, U4, U5]
 
 ---
 
-## Example Response (200 OK)
+**Example Response (200 OK)**
 ```json
 {
   "userId": "U1",
@@ -225,16 +225,16 @@ Final connections up to level 2 → [U2, U3, U4, U5]
 
 ---
 
-## Error Responses
+**Error Responses**
 
 | Status Code | Description | 
 |--------------|-------------|
-| **400** | Invalid level number 
-| **404** | User not found | 
+| **400*** | Invalid level number 
+| **404*** | User not found | 
 
 ---
 
-## Visual Summary
+**Visual Summary**
 
 ```
 Level 0 → [U1]
