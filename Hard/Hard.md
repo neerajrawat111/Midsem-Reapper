@@ -1,6 +1,6 @@
 # Social Connection Service – Node.js + Express + Prisma
 
-This backend service allows users to connect each other — similar to friend connections on social platforms.  
+This backend service allows users to connect with each other — similar to friend connections on social platforms.  
 Built with **Node.js**, **Express**, and **Prisma ORM**.
 
 ---
@@ -19,23 +19,23 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 ### **Model: `User`**
 
 **Fields Description:**
-- **id** → Unique identifier primary key default Auto generated
+- **id** → Unique identifier primary key  
 - **name** → User’s full name  
-- **email** → Unique email address for login or identification  
-- **connections** → An array that stores IDs of connected users  
-- **createdAt** → Timestamp of user creation (default: current time)  
-- **updatedAt** → Timestamp of last update (auto-updates when modified)
+- **email** → Unique email address  
+- **connections** → A **JSON object** storing connected user IDs  
+- **createdAt** → Timestamp of creation  
+- **updatedAt** → Timestamp of update  
 
 ---
 
 ## 2. API Endpoints
 
 | Method | Endpoint | Description |
-|:-------|:----------|:-------------|
+|--------|----------|-------------|
 | **POST** | `/users` | Create a new user |
 | **POST** | `/connect` | Connect two users |
 | **POST** | `/disconnect` | Disconnect two users |
-| **GET** | `/users/:id/connections/:level` | Fetch N-level user connections |
+| **GET** | `/users/:id/connections/:level` | Fetch N-level connections |
 
 ---
 
@@ -54,24 +54,20 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 }
 ```
 
-**Response (201 Created):**
+**Response:**
 ```json
 {
   "message": "User created successfully",
   "user": {
-    "id": "b1a4d9a3-52b4-4eaa-9cc3-8a9c87d22e6f",
+    "id": "uuid",
     "name": "John Doe",
     "email": "john@example.com",
-    "connections": [],
-    "createdAt": "2025-11-13T09:25:12.235Z",
-    "updatedAt": "2025-11-13T09:25:12.235Z"
+    "connections": {},
+    "createdAt": "timestamp",
+    "updatedAt": "timestamp"
   }
 }
 ```
-
-**Error Responses:**
-- `400`: Missing required fields  
-- `409`: Email already exists  
 
 ---
 
@@ -83,28 +79,19 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 **Request Body:**
 ```json
 {
-  "userId1": "uuid-of-user-1",
-  "userId2": "uuid-of-user-2"
+  "userId1": "uuid-1",
+  "userId2": "uuid-2"
 }
 ```
 
-**Rules:**
-- Both users must exist  
-- A user cannot connect to themselves  
-- Update both users’ `connections` arrays
-
-**Response (200 OK):**
+**Response:**
 ```json
 {
   "message": "Users connected successfully",
-  "user1Connections": ["uuid-of-user-2"],
-  "user2Connections": ["uuid-of-user-1"]
+  "user1Connections": { "uuid-2": true },
+  "user2Connections": { "uuid-1": true }
 }
 ```
-
-**Error Responses:**
-- `400`: Users cannot connect to themselves  
-- `404`: One or both users not found  
 
 ---
 
@@ -116,136 +103,78 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 **Request Body:**
 ```json
 {
-  "userId1": "uuid-of-user-1",
-  "userId2": "uuid-of-user-2"
+  "userId1": "uuid-1",
+  "userId2": "uuid-2"
 }
 ```
 
-**Action:**
-- Remove each user’s ID from the other’s connections array
-
-**Response (200 OK):**
+**Response:**
 ```json
 {
   "message": "Users disconnected successfully"
 }
 ```
 
-**Error Responses:**
-- `404`: One or both users not found  
-- `400`: Users are not connected  
-
 ---
 
-### ***Get N-Level Connections***
+## ***Get N-Level Connections***
 
-***Endpoint***
+**Endpoint:**
 `GET /users/:id/connections/:level`
 
-**Example Request:**
-```
-GET /users/b1a4d9a3-52b4-4eaa-9cc3-8a9c87d22e6f/connections/2
-```
+---
+
+### ***Concept: N-Level Connections (Graph-Based)***
+
+Each **user** is a **node**, and each **connection** is an **edge**.
 
 ---
 
-### ***Concept: N-Level Connections***
+### Example Graph
 
-Every **user** is a **node**, and every **connection** is an **edge** between users — similar to a social graph.
-
-| Level | Meaning | Example |
-|-------|----------|----------|
-| **Level 1** | Direct connections (friends) | A → B |
-| **Level 2** | Friends + Friends of friends | A → B → C |
-| **Level 3** | Friends + Friends of friends + Next circle | A → B → C → D |
-
----
-
-***Example Data***
-
-| ID | Name | Connections |
-|----|------|-------------|
-| U1 | Suraj | U2, U3 |
-| U2 | Alice | U1, U4 |
-| U3 | Bob | U1, U5 |
-| U4 | Charlie | U2, U6 |
-| U5 | David | U3 |
-| U6 | Emma | U4 |
-
-***Graph Visualization***
-
-```
-        U5(David)
-          |
-U1(Suraj) - U3(Bob)
-  |
-  U2(Alice)
-  |
-  U4(Charlie)
-  |
-  U6(Emma)
-```
+| ID | Name | Connections(JSON) |
+|----|------|-------------------|
+| U1 | Suraj | {"U2": true, "U3": true} |
+| U2 | Alice | {"U1": true, "U4": true} |
+| U3 | Bob   | {"U1": true, "U5": true} |
+| U4 | Charlie | {"U2": true, "U6": true} |
+| U5 | David | {"U3": true} |
+| U6 | Emma  | {"U4": true} |
 
 ---
 
-***Example Query***
+### Example Query
 
-**Request:**
-```
-GET /users/U1/connections/2
-```
+`GET /users/U1/connections/2`
 
-### Step 1 — Level 1 (Immediate Connections)
-U1 → [U2, U3]
+**Level 1:** U2, U3  
+**Level 2:** U4, U5  
 
-### Step 2 — Level 2 (Friends of Level 1 Connections)
-- U2 → [U1, U4] → exclude U1 → add U4  
-- U3 → [U1, U5] → exclude U1 → add U5  
+**Final merged:** U2, U3, U4, U5
 
- Level 2: [U4, U5]
-
-### Step 3 — Merge & Remove Duplicates
-Final connections up to level 2 → [U2, U3, U4, U5]
-
----
-
-**Example Response (200 OK)**
+**Example Response:**
 ```json
 {
   "userId": "U1",
   "level": 2,
   "connections": [
-    { "id": "U2", "name": "Alice", "email": "alice@example.com" },
-    { "id": "U3", "name": "Bob", "email": "bob@example.com" },
-    { "id": "U4", "name": "Charlie", "email": "charlie@example.com" },
-    { "id": "U5", "name": "David", "email": "david@example.com" }
+    { "id": "U2", "name": "Alice" },
+    { "id": "U3", "name": "Bob" },
+    { "id": "U4", "name": "Charlie" },
+    { "id": "U5", "name": "David" }
   ]
 }
 ```
 
 ---
 
-**Error Responses**
-
-| Status Code | Description | 
-|--------------|-------------|
-| **400*** | Invalid level number 
-| **404*** | User not found | 
-
----
-
-**Visual Summary**
+## Summary
 
 ```
-Level 0 → [U1]
-Level 1 → [U2, U3]
-Level 2 → [U4, U5]
-Level 3 → [U6]
+Level 0 → U1  
+Level 1 → U2, U3  
+Level 2 → U4, U5  
+Level 3 → U6  
 ```
 
-So:
-- `/connections/1` → Alice, Bob  
-- `/connections/2` → Alice, Bob, Charlie, David  
-- `/connections/3` → Alice, Bob, Charlie, David, Emma
-
-
+Now `/connections/3` → U2, U3, U4, U5, U6
