@@ -124,57 +124,27 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 
 ---
 
-### ***Concept: N-Level Connections (Graph-Based)***
+### ***Concept: N-Level Connections***
 
 Each **user** is a **node**, and each **connection** is an **edge**.
 
----
-
-### Example Graph
-
-| ID | Name | Connections(JSON) |
-|----|------|-------------------|
-| U1 | Suraj | {"U2": true, "U3": true} |
-| U2 | Alice | {"U1": true, "U4": true} |
-| U3 | Bob   | {"U1": true, "U5": true} |
-| U4 | Charlie | {"U2": true, "U6": true} |
-| U5 | David | {"U3": true} |
-| U6 | Emma  | {"U4": true} |
-
----
-
 ### Example Query
 
-`GET /users/U1/connections/2`
-
-**Level 1:** U2, U3  
-**Level 2:** U4, U5  
-
-**Final merged:** U2, U3, U4, U5
+`GET /users/uuid/connections/2`
 
 **Example Response:**
 ```json
 {
-  "userId": "U1",
+  "userId": "uuid",
   "level": 2,
   "connections": [
-    { "id": "U2", "name": "Alice" },
-    { "id": "U3", "name": "Bob" },
-    { "id": "U4", "name": "Charlie" },
-    { "id": "U5", "name": "David" }
+    { "id": "uuid", "name": "Alice" },
+    { "id": "uuid", "name": "Bob" },
+    { "id": "uuid", "name": "Charlie" },
+    { "id": "uuid", "name": "David" }
   ]
 }
 ```
 
 ---
 
-## Summary
-
-```
-Level 0 → U1  
-Level 1 → U2, U3  
-Level 2 → U4, U5  
-Level 3 → U6  
-```
-
-Now `/connections/3` → U2, U3, U4, U5, U6
