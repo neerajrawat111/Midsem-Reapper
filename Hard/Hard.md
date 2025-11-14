@@ -127,6 +127,8 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 ### ***Concept: N-Level Connections***
 
 Each **user** is a **node**, and each **connection** is an **edge**.
+### ***Graph Levels***
+![Graph](./graph.png)
 
 ### Example Query
 
