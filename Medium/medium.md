@@ -1,33 +1,49 @@
-Question: File Access Middleware with Role-Based Authorization
-Problem Statement
+# File Access Middleware with Role-Based Authorization
 
-You are tasked with building an Express.js server in index.js that checks user file access permissions based on their role, which is passed through the request URL.
+## Problem Statement
 
-Each user has a specific access level, defined as either READ_WRITE or READ.
+You are tasked with building an Express.js server in `index.js` that
+checks user file access permissions based on their role, which is passed
+through the request URL.
 
-When a user sends a request to the endpoint /data/:user, your middleware(middleware.js) should:
+Each user has a specific access level, defined as either **READ_WRITE**
+or **READ**.
 
-Check if the user has READ_WRITE access.
+When a user sends a request to the endpoint `/data/:user`, your
+middleware (`middleware.js`) should:
 
-If the user has READ_WRITE access, call next() and allow access to the /data/:user route.
+-   Check if the user has **READ_WRITE** access.
+-   If the user has READ_WRITE access, call `next()` and allow access to
+    the `/data/:user` route.
+-   The route should read the contents of a file named `data.txt` and
+    send it in the response as JSON with the key `"message"` and status
+    code `200`.
+-   If the user does not have READ_WRITE access, reject the request with
+    status code `403` and the message:
 
-The route should read the contents of a file named data.txt and send it in the response as JSON with the key "message" and status code 200.
+```{=html}
+<!-- -->
+```
+    { "message": "Access Denied" }
 
-If the user does not have READ_WRITE access, reject the request with status code 403 and the message { "message": "Access Denied" }.
+### Example
 
-Example
-Request:
-GET /data/RAHUL_READ_WRITE
+**Request:**
 
-Response (200 OK):
-{
-  "message": "File content here..."
-}
+`GET /data/RAHUL_READ_WRITE`
 
-Request:
-GET /data/NEERAJ_READ
+**Response (200 OK):**
 
-Response (403 Forbidden):
-{
-  "message": "Access Denied"
-}
+    {
+      "message": "File content here..."
+    }
+
+**Request:**
+
+`GET /data/NEERAJ_READ`
+
+**Response (403 Forbidden):**
+
+    {
+      "message": "Access Denied"
+    }
