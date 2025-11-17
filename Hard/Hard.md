@@ -7,41 +7,42 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 
 ## Features
 
-- Create and manage user accounts  
-- Connect or disconnect users  
-- Retrieve **N-level connections** (friends of friends, etc.)  
-- Prevent circular or duplicate connections  
-- Get all users  
-- Get user by ID  
-- Delete user by ID  
+- Create and manage user accounts
+- Connect or disconnect users
+- Retrieve **N-level connections** (friends of friends, etc.)
+- Prevent circular or duplicate connections
+- Get all users
+- Get user by ID
+- Delete user by ID
 
 ---
 
-## 1. Database Design 
+## 1. Database Design
 
 ### **Model: `User`**
 
 **Fields Description:**
-- **id** → Unique identifier primary key  
-- **name** → User’s full name  
-- **email** → Unique email address  
-- **connections** → A **JSON object** storing connected user IDs  
-- **createdAt** → Timestamp of creation  
-- **updatedAt** → Timestamp of update  
+
+- **id** → Unique identifier primary key
+- **name** → User’s full name
+- **email** → Unique email address
+- **connections** → A **JSON object** storing connected user IDs
+- **createdAt** → Timestamp of creation
+- **updatedAt** → Timestamp of update
 
 ---
 
 ## 2. API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| **POST** | `/users` | Create a new user |
-| **GET** | `/users` | Get all users |
-| **GET** | `/users/:id` | Get user by ID |
-| **DELETE** | `/users/:id` | Delete user by ID |
-| **POST** | `/connect` | Connect two users |
-| **POST** | `/disconnect` | Disconnect two users |
-| **GET** | `/users/:id/connections/:level` | Fetch N-level connections |
+| Method     | Endpoint                        | Description               |
+| ---------- | ------------------------------- | ------------------------- |
+| **POST**   | `/users`                        | Create a new user         |
+| **GET**    | `/users`                        | Get all users             |
+| **GET**    | `/users/:id`                    | Get user by ID            |
+| **DELETE** | `/users/:id`                    | Delete user by ID         |
+| **POST**   | `/connect`                      | Connect two users         |
+| **POST**   | `/disconnect`                   | Disconnect two users      |
+| **GET**    | `/users/:id/connections/:level` | Fetch N-level connections |
 
 ---
 
@@ -53,6 +54,7 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 `POST /users`
 
 **Request Body:**
+
 ```json
 {
   "name": "John Doe",
@@ -61,16 +63,14 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 ```
 
 **Response:**
+
 ```json
 {
-  "message": "User created successfully",
-  "user": {
-    "id": "uuid",
-    "name": "John Doe",
-    "email": "john@example.com",
-    "connections": {},
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
+  "data": {
+    "id": 1,
+    "name": "abc",
+    "email": "katiyar@gmail.com",
+    "connections": []
   }
 }
 ```
@@ -83,13 +83,21 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 `GET /users`
 
 **Response:**
+
 ```json
 {
-  "users": [
+  "data": [
     {
-      "id": "uuid",
-      "name": "John Doe",
-      "email": "john@example.com"
+      "id": 1,
+      "name": "abc",
+      "email": "katiyar@gmail.com",
+      "connections": []
+    },
+    {
+      "id": 5,
+      "name": "pqr",
+      "email": "gautams@gmail.com",
+      "connections": []
     }
   ]
 }
@@ -103,12 +111,15 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 `GET /users/:id`
 
 **Example Response:**
+
 ```json
 {
-  "id": "uuid",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "connections": {}
+  "data": {
+    "id": 3,
+    "name": "abc",
+    "email": "gautam@gmail.com",
+    "connections": []
+  }
 }
 ```
 
@@ -120,9 +131,15 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 `DELETE /users/:id`
 
 **Response:**
+
 ```json
 {
-  "message": "User deleted successfully"
+  "data": {
+    "id": 3,
+    "name": "abc",
+    "email": "gautam@gmail.com",
+    "connections": []
+  }
 }
 ```
 
@@ -134,6 +151,7 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 `POST /connect`
 
 **Request Body:**
+
 ```json
 {
   "userId1": "uuid-1",
@@ -141,10 +159,66 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 }
 ```
 
-**Response:**
+before
+
 ```json
 {
-  "message": "User Connected"
+  "data": [
+    {
+      "id": 1,
+      "name": "abc",
+      "email": "katiyar@gmail.com",
+      "connections": []
+    },
+    {
+      "id": 5,
+      "name": "pqr",
+      "email": "gautams@gmail.com",
+      "connections": []
+    }
+  ]
+}
+```
+
+after
+
+```json
+{
+  "data": {
+    "user1": {
+      "id": 1,
+      "name": "abc",
+      "email": "katiyar@gmail.com",
+      "connections": [5]
+    },
+    "user2": {
+      "id": 5,
+      "name": "pqr",
+      "email": "gautams@gmail.com",
+      "connections": [1]
+    }
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "data": {
+    "user1": {
+      "id": 1,
+      "name": "abc",
+      "email": "katiyar@gmail.com",
+      "connections": [5]
+    },
+    "user2": {
+      "id": 5,
+      "name": "pqr",
+      "email": "gautams@gmail.com",
+      "connections": [1]
+    }
+  }
 }
 ```
 
@@ -156,13 +230,56 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 `POST /disconnect`
 
 **Request Body:**
+
 ```json
 {
   "userId1": "uuid-1",
   "userId2": "uuid-2"
 }
 ```
+
+before
+{
+"data": {
+"user1": {
+"id": 1,
+"name": "abc",
+"email": "katiyar@gmail.com",
+"connections": [
+5
+]
+},
+"user2": {
+"id": 5,
+"name": "pqr",
+"email": "gautams@gmail.com",
+"connections": [
+1
+]
+}
+}
+}
+
+after
+{
+"data": {
+"user1": {
+"id": 1,
+"name": "abc",
+"email": "katiyar@gmail.com",
+"connections": []
+},
+"user2": {
+"id": 5,
+"name": "pqr",
+"email": "gautams@gmail.com",
+"connections": []
+}
+}
+}
+
 **Response:**
+
 ```json
 {
   "message": "User Disconnected"
@@ -174,6 +291,7 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 ### **g. Get N-Level Connections**
 
 #### Endpoint
+
 ```
 GET /users/:id/connections/:level
 ```
@@ -183,60 +301,65 @@ GET /users/:id/connections/:level
 ### What Are N-Level Connections?
 
 In a social graph:
+
 - Every user = a node
-- Every connection = an edge
 
 N-level means:
-- Level 1 → Direct Connections (Immediate Friends) 
-- Level 2 → Friends of Level 1 Connections (Friends of Friends)
-- Level 3 → Friends of Level 2 Connections (Extended Network)  
 
-### Users to Create
+- Level 1 → Immediate Friends
+- Level 2 → Immediate Friends of Level 1
+- Level 3 → Immediate Friends of Level 2
 
-Create the following users:
+Consider the following connections:
 
-- A
-- Bob
-- Alice
-- David
-- Charlie
-- Raju
-
----
-
-### Connections (According to the Graph)
-
-Create the following connections:
-
-- A → Bob  
-- A → David  
-- Bob → Alice  
-- Bob → Charlie  
-- David → Charlie  
-- Charlie → Raju  
-
----
-
-### ***Graph Levels***
-![Graph](./example.png)
+![Graph](./example2.png)
 
 ### Example Query
 
-`GET /users/1/connections/2`
+`GET /users/56/connections/2`
 
 **Example Response:**
+
 ```json
 {
-  "userId": "1",
-  "level": 2,
-  "connections": [
-    { "id": "2", "name": "Alice" },
-    { "id": "3", "name": "Bob" },
-    { "id": "4", "name": "Charlie" },
-    { "id": "5", "name": "David" }
+  "data": [
+    {
+      "id": "56",
+      "name": "",
+      "email": "",
+      "connections": [2, 9]
+    },
+    {
+      "id": "2",
+      "name": "",
+      "email": "",
+      "connections": [12, 56, 1]
+    },
+    {
+      "id": "9",
+      "name": "",
+      "email": "",
+      "connections": [56]
+    },
+    {
+      "id": "12",
+      "name": "",
+      "email": "",
+      "connections": [2]
+    },
+    ,
+    {
+      "id": "1",
+      "name": "",
+      "email": "",
+      "connections": [2, 4]
+    }
   ]
 }
 ```
 
----
+only 2 level connections has been asked for, so
+id 56, has 2,9 as immediate friends,
+2 has 12,1 as as immediate friends
 
+---
