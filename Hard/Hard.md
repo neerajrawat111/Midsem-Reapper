@@ -154,8 +154,8 @@ Built with **Node.js**, **Express**, and **Prisma ORM**.
 
 ```json
 {
-  "userId1": "uuid-1",
-  "userId2": "uuid-2"
+  "userId1": "1",
+  "userId2": "5"
 }
 ```
 
@@ -239,44 +239,46 @@ after
 ```
 
 before
+
+```json
 {
-"data": {
-"user1": {
-"id": 1,
-"name": "abc",
-"email": "katiyar@gmail.com",
-"connections": [
-5
-]
-},
-"user2": {
-"id": 5,
-"name": "pqr",
-"email": "gautams@gmail.com",
-"connections": [
-1
-]
+  "data": {
+    "user1": {
+      "id": 1,
+      "name": "abc",
+      "email": "katiyar@gmail.com",
+      "connections": [5]
+    },
+    "user2": {
+      "id": 5,
+      "name": "pqr",
+      "email": "gautams@gmail.com",
+      "connections": [1]
+    }
+  }
 }
-}
-}
+```
 
 after
+
+```json
 {
-"data": {
-"user1": {
-"id": 1,
-"name": "abc",
-"email": "katiyar@gmail.com",
-"connections": []
-},
-"user2": {
-"id": 5,
-"name": "pqr",
-"email": "gautams@gmail.com",
-"connections": []
+  "data": {
+    "user1": {
+      "id": 1,
+      "name": "abc",
+      "email": "katiyar@gmail.com",
+      "connections": []
+    },
+    "user2": {
+      "id": 5,
+      "name": "pqr",
+      "email": "gautams@gmail.com",
+      "connections": []
+    }
+  }
 }
-}
-}
+```
 
 **Response:**
 
